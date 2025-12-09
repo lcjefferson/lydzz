@@ -91,29 +91,44 @@ export class LeadsService {
     const lead = await this.prisma.lead.findUnique({ where: { id } });
     const cf = (lead?.customFields as Record<string, unknown>) || {};
     const now = new Date().toISOString();
-    const newComment: { id: string; content: string; userId?: string; createdAt: string } = {
+    const newComment: {
+      id: string;
+      content: string;
+      userId?: string;
+      createdAt: string;
+    } = {
       id: crypto.randomUUID(),
       content,
       userId,
       createdAt: now,
     };
-    const existing: Array<{ id: string; content: string; userId?: string; createdAt: string }> = Array.isArray(
-      (cf as Record<string, unknown>).comments,
-    )
-      ? (((cf as Record<string, unknown>).comments as unknown) as Array<{
+    const existing: Array<{
+      id: string;
+      content: string;
+      userId?: string;
+      createdAt: string;
+    }> = Array.isArray(cf.comments)
+      ? (cf.comments as Array<{
           id: string;
           content: string;
           userId?: string;
           createdAt: string;
         }>)
       : [];
-    const next: Array<{ id: string; content: string; userId?: string; createdAt: string }> = [
-      ...existing,
-      newComment,
-    ];
+    const next: Array<{
+      id: string;
+      content: string;
+      userId?: string;
+      createdAt: string;
+    }> = [...existing, newComment];
     return this.prisma.lead.update({
       where: { id },
-      data: { customFields: { ...(cf || {}), comments: next as unknown as Prisma.InputJsonValue } },
+      data: {
+        customFields: {
+          ...(cf || {}),
+          comments: next as unknown as Prisma.InputJsonValue,
+        },
+      },
     });
   }
 
