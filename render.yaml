@@ -1,9 +1,7 @@
-databases:
-  - name: lydzz-db
-
 services:
   - type: web
     name: lydzz-backend
+    plan: free
     env: node
     rootDir: backend
     buildCommand: npm ci && npm run build
@@ -12,10 +10,6 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: DATABASE_URL
-        fromDatabase:
-          name: lydzz-db
-          property: connectionString
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_REFRESH_SECRET
@@ -37,6 +31,7 @@ services:
 
   - type: web
     name: lydzz-frontend
+    plan: free
     env: node
     rootDir: frontend
     buildCommand: npm ci && npm run build
